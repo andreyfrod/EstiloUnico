@@ -147,29 +147,6 @@
   </div>
 
   <script>
-    fetch('/EstiloUnico/nav.html')
-      .then(response => response.text())
-      .then(data => {
-        document.getElementById('nav-placeholder').innerHTML = data;
-
-        const logeado = localStorage.getItem("usuario") === "admin";
-        if (logeado) {
-          const loginText = document.getElementById("login-text");
-          if (loginText) {
-            loginText.innerText = "Cerrar sesión";
-            loginText.href = "#";
-            loginText.onclick = () => {
-              localStorage.removeItem("usuario");
-              location.href = "/EstiloUnico/index.html";
-            };
-          }
-          const menuModulos = document.getElementById("menu-modulos");
-          if (menuModulos) {
-            menuModulos.style.display = "flex";
-          }
-        }
-      });
-
     const form = document.getElementById("form-empleado");
     const tabla = document.querySelector("#tabla-empleados tbody");
 
@@ -246,5 +223,6 @@
 
     cargarDesdeStorage();
   </script>
+  <script src="/EstiloUnico/sesion.js"></script>
 </body>
 </html>
