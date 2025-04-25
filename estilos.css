@@ -243,3 +243,20 @@ body {
   .modulos-nav a:hover {
     color: white;
   }
+
+@media (max-width: 768px) {
+  .modulos-nav {
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+    margin-left: 0;
+    display: flex !important;
+  }
+
+  .modulos-nav a {
+    padding: 0.5em 0;
+    border-top: 1px solid #333;
+    color: #d4af37;
+    text-decoration: none;
+  }
+}
