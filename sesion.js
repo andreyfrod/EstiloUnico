@@ -28,13 +28,14 @@ fetch('/EstiloUnico/nav.html')
       }
 
       // Si hay sesión, se muestran los módulos
-      if (menuModulos) {
-        menuModulos.style.display = "flex";
-      }
-    } else {
-      // Si NO hay sesión, ocultar módulos por si vienen visibles por HTML
-      if (menuModulos) {
-        menuModulos.style.display = "none";
-      }
-    }
+    if (menuModulos) {
+    menuModulos.classList.remove("hidden");
+    menuModulos.style.display = "flex";
+  }
+} else {
+  if (menuModulos) {
+    menuModulos.classList.add("hidden");
+    menuModulos.style.display = "none";
+  }
+}
   });
