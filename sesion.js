@@ -1,9 +1,11 @@
-// Detecta si estás en GitHub Pages y arma la ruta base automáticamente
-let base = window.location.hostname.includes("github.io")
-  ? "/EstiloUnico" // <--- nombre exacto del repo
-  : "";
+// Obtiene la ruta base del sitio
+const basePath = window.location.pathname.split('/').slice(0, -1).join('/');
 
-fetch(`${base}/nav.html`)
+// Construye la ruta completa al nav.html
+const navPath = `${basePath}/nav.html`;
+
+// Carga el nav.html
+fetch(navPath)
   .then(response => response.text())
   .then(data => {
     document.getElementById('nav-placeholder').innerHTML = data;
