@@ -29,7 +29,7 @@ fetch(navPath)
         loginText.onclick = (e) => {
           e.preventDefault();
           localStorage.removeItem("usuario");
-          window.location.href = `${base}/index.html`;
+          window.location.href = `${basePath}/index.html`;
         };
       }
 
