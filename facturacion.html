@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Facturación</title>
+  <link rel="stylesheet" href="../estilos.css">
+  <style>
+    .factura-container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #2c2c2c;
+      color: #fff;
+      border-radius: 10px;
+    }
+    .factura-container h2 {
+      color: #d4af37;
+      margin-bottom: 20px;
+    }
+    .factura-container label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .factura-container input, .factura-container select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #555;
+      border-radius: 6px;
+      background-color: #1c1c1c;
+      color: #fff;
+    }
+    .factura-container button {
+      margin-top: 20px;
+      background-color: #d4af37;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      color: black;
+    }
+    .resultado-factura {
+      margin-top: 30px;
+      background-color: #1c1c1c;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .resultado-factura h3 {
+      color: #d4af37;
+    }
+  </style>
+</head>
+<body>
+  <div id="contenedor">
+    <div id="nav-placeholder"></div>
+
+    <div class="factura-container">
+      <h2>Generar Factura</h2>
+      <label for="reserva-select">Seleccione Número de Reservación:</label>
+      <select id="reserva-select"></select>
+
+      <button onclick="generarFactura()">Facturar</button>
+
+      <div id="factura" class="resultado-factura" style="display:none;"></div>
+    </div>
+  </div>
+
+  <script src="../sesion.js"></script>
+  <script>
+    const reservas = JSON.parse(localStorage.getItem("reservasData")) || [];
+    const clientes = JSON.parse(localStorage.getItem("clientesData")) || [];
+
+    const reservaSelect = document.getElementById("reserva-select");
+    const facturaDiv = document.getElementById("factura");
+
+    reservas.forEach((reserva, i) => {
+      const option = document.createElement("option");
+      option.value = i;
+      option.textContent = `#${i + 1} - ${reserva.cliente} - ${reserva.horario}`;
+      reservaSelect.appendChild(option);
+    });
+
+    function generarFactura() {
+      const index = parseInt(reservaSelect.value);
+      const reserva = reservas[index];
+
+      const clienteData = clientes.find(c => c[1] === reserva.cliente);
+      const cedula = clienteData ? clienteData[0] : "N/D";
+
+      const precios = {
+        "niño": 2500,
+        "adulto": 5000,
+        "adulto mayor": 2500
+      };
+
+      let total = 0;
+      let detalle = "";
+      reserva.condiciones.forEach(cond => {
+        total += precios[cond];
+        detalle += `<li>${cond}: &#8353;${precios[cond]}</li>`;
+      });
+
+      facturaDiv.innerHTML = `
+        <h3>Factura</h3>
+        <p><strong>Empresa:</strong> Estilo Único Barbería & Salón</p>
+        <p><strong>Cliente:</strong> ${reserva.cliente}</p>
+        <p><strong>Cédula:</strong> ${cedula}</p>
+        <p><strong>Empleado que atendió:</strong> ${reserva.empleado}</p>
+        <p><strong>Horario:</strong> ${reserva.horario}</p>
+        <p><strong>Cantidad de personas:</strong> ${reserva.cantidad}</p>
+        <p><strong>Condiciones:</strong></p>
+        <ul>${detalle}</ul>
+        <p><strong>Total a pagar:</strong> &#8353;${total}</p>
+      `;
+
+      facturaDiv.style.display = "block";
+    }
+  </script>
+</body>
+</html>

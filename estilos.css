@@ -1,0 +1,245 @@
+/* estilos.css */
+
+body {
+    margin: 0;
+    font-family: 'Georgia', serif;
+    background-color: #1c1c1c;
+    color: #f5f5f5;
+  }
+  
+  #contenedor {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1em;
+  }
+  
+  /* NAVBAR */
+  header {
+    background-color: #1c1c1c;
+    color: white;
+    border-bottom: 2px solid #d4af37;
+    padding: 0.5em 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  .nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  
+  .logo {
+    font-size: 1.5em;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    color: white;
+  }
+  
+  .logo span {
+    margin-left: 0.5em;
+  }
+  
+  nav#main-nav {
+    display: flex;
+    gap: 1em;
+  }
+  
+  nav#main-nav a {
+    color: #d4af37;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  nav#main-nav a:hover {
+    color: #fff;
+  }
+  
+  .login-box .login-link {
+    background-color: #d4af37;
+    color: #000;
+    padding: 0.5em 1em;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s ease;
+  }
+  
+  .login-box .login-link:hover {
+    background-color: #fff;
+    color: #000;
+  }
+  
+  .menu-toggle {
+    display: none;
+    font-size: 1.5em;
+    color: white;
+    cursor: pointer;
+  }
+  
+  @media (max-width: 768px) {
+    .menu-toggle {
+      display: block;
+    }
+  
+    nav#main-nav {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      background-color: #000;
+      margin-top: 1em;
+    }
+  
+    nav#main-nav.open {
+      display: flex;
+    }
+  
+    nav#main-nav a {
+      padding: 0.5em 0;
+      text-align: center;
+      border-top: 1px solid #333;
+    }
+  }
+  
+  /* HERO */
+  .hero {
+    background: #333;
+    padding: 2em;
+    text-align: center;
+    border-radius: 8px;
+    margin-top: 1em;
+  }
+  
+  .hero .imagen-principal {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-bottom: 1em;
+  }
+  
+  .boton-login {
+    display: inline-block;
+    margin-top: 1em;
+    padding: 0.5em 1em;
+    background: #d4af37;
+    color: black;
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  /* SECCIONES */
+  section {
+    margin-top: 2em;
+    background: #2c2c2c;
+    padding: 1.5em;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  }
+  
+  section h2 {
+    color: #d4af37;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  ul li {
+    margin-bottom: 0.5em;
+  }
+  
+  blockquote {
+    font-style: italic;
+    margin: 1em 0;
+    border-left: 4px solid #d4af37;
+    padding-left: 1em;
+    color: #ccc;
+  }
+  
+  /* LOGIN */
+  .login {
+    margin-top: 3em;
+    background: #2c2c2c;
+    padding: 2em;
+    border-radius: 8px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  }
+  
+  .login form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .login label,
+  .login input,
+  .login button {
+    margin-bottom: 1em;
+  }
+  
+  .login input {
+    padding: 0.5em;
+    border: 1px solid #444;
+    background-color: #1c1c1c;
+    color: white;
+    border-radius: 4px;
+  }
+  
+  .login button {
+    background: #d4af37;
+    color: black;
+    padding: 0.5em;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  /* MODULOS */
+  .modulos ul li {
+    margin-bottom: 1em;
+  }
+  
+  .modulos ul li a {
+    text-decoration: none;
+    background: #388e3c;
+    color: white;
+    padding: 0.5em 1em;
+    border-radius: 6px;
+    display: inline-block;
+  }
+
+  .imagen-principal {
+    max-width: 100%;
+    max-height: 500px;
+    border-radius: 8px;
+    margin-bottom: 1em;
+    object-fit: cover;
+    width: 100%;
+    display: block;
+  }
+
+  .modulos-nav {
+    display: flex;
+    gap: 1em;
+    margin-left: 2em;
+  }
+  
+  .modulos-nav a {
+    color: #d4af37;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+  
+  .modulos-nav a:hover {
+    color: white;
+  }

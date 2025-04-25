@@ -1,0 +1,44 @@
+<header>
+    <div class="nav-container">
+  
+      <!-- Menú hamburguesa (visible solo en móvil) -->
+      <div class="menu-toggle" id="menu-toggle">☰</div>
+  
+      <!-- Logo -->
+      <div class="logo">💈 <span>Estilo Único</span></div>
+  
+      <!-- Navegación principal -->
+      <nav id="main-nav">
+        <a href="index.html">Inicio</a>
+        <a href="#historia">Historia</a>
+        <a href="#servicios">Servicios</a>
+        <a href="#testimonios">Testimonios</a>
+      </nav>
+
+      <div id="menu-modulos" style="display: none;" class="modulos-nav">
+        <a href="empleados.html">Empleados</a>
+        <a href="clientes.html">Clientes</a>
+        <a href="reservas.html">Reservas</a>
+        <a href="facturacion.html">Facturación</a>
+        <a href="informes.html">Informes</a>
+      </div>
+  
+      <!-- Login -->
+      <div class="login-box">
+        <a href="login.html" class="login-link" id="login-text">Iniciar sesión</a>
+      </div>
+  
+    </div>
+  </header>
+  
+  <script>
+    // Menú responsive
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('menu-toggle');
+      const nav = document.getElementById('main-nav');
+      toggle.addEventListener('click', () => {
+        nav.classList.toggle('open');
+      });
+    });
+  </script>
+  

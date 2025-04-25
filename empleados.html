@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo de Empleados</title>
+  <link rel="stylesheet" href="../estilos.css">
+  <style>
+    .empleado-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      padding: 60px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .formulario-empleado {
+      flex: 0.5;
+      min-width: 150px;
+      background-color: #2c2c2c;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .formulario-empleado h2 {
+      color: #d4af37;
+      margin-bottom: 20px;
+    }
+    .formulario-empleado label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .formulario-empleado input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #555;
+      border-radius: 6px;
+      background-color: #1c1c1c;
+      color: #fff;
+    }
+    .formulario-empleado button {
+      margin-top: 20px;
+      background-color: #d4af37;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      color: black;
+    }
+    .formulario-empleado button:hover {
+      background-color: #c19a2e;
+    }
+    .tabla-empleados {
+      flex: 1;
+      min-width: 280px;
+      background-color: #2c2c2c;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      overflow-x: auto;
+    }
+    .tabla-empleados h2 {
+      color: #d4af37;
+      margin-bottom: 15px;
+    }
+    .tabla-empleados table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+    .tabla-empleados th, .tabla-empleados td {
+      border: 1px solid #444;
+      padding: 10px;
+      text-align: center;
+    }
+    .tabla-empleados th {
+      background-color: #1c1c1c;
+      color: #d4af37;
+    }
+    .tabla-empleados td button {
+      margin: 2px;
+      background-color: crimson;
+      color: white;
+      border: none;
+      padding: 0.4em 0.8em;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .tabla-empleados td button.guardar {
+      background-color: #28a745;
+    }
+  </style>
+</head>
+<body>
+  <div id="contenedor">
+    <div id="nav-placeholder"></div>
+
+    <div class="empleado-container">
+      <div class="formulario-empleado">
+        <h2>Agregar Empleado</h2>
+        <form id="form-empleado">
+          <label for="cedula">Cédula:</label>
+          <input type="text" id="cedula" name="cedula" required>
+
+          <label for="nombre">Nombre:</label>
+          <input type="text" id="nombre" name="nombre" required>
+
+          <label for="direccion">Dirección:</label>
+          <input type="text" id="direccion" name="direccion" required>
+
+          <label for="telefono">Teléfono:</label>
+          <input type="text" id="telefono" name="telefono" required>
+
+          <label for="correo">Correo:</label>
+          <input type="email" id="correo" name="correo" required>
+
+          <label for="comision">Comisión (%):</label>
+          <input type="number" id="comision" name="comision" min="0" max="100" required>
+
+          <button type="submit">Guardar Empleado</button>
+        </form>
+      </div>
+
+      <div class="tabla-empleados">
+        <h2>Lista de Empleados</h2>
+        <table id="tabla-empleados">
+          <thead>
+            <tr>
+              <th>Cédula</th>
+              <th>Nombre</th>
+              <th>Dirección</th>
+              <th>Teléfono</th>
+              <th>Correo</th>
+              <th>Comisión</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Filas dinámicas -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    fetch('../nav.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('nav-placeholder').innerHTML = data;
+
+        const logeado = localStorage.getItem("usuario") === "admin";
+        if (logeado) {
+          const loginText = document.getElementById("login-text");
+          if (loginText) {
+            loginText.innerText = "Cerrar sesión";
+            loginText.href = "#";
+            loginText.onclick = () => {
+              localStorage.removeItem("usuario");
+              location.href = "../index.html";
+            };
+          }
+          const menuModulos = document.getElementById("menu-modulos");
+          if (menuModulos) {
+            menuModulos.style.display = "flex";
+          }
+        }
+      });
+
+    const form = document.getElementById("form-empleado");
+    const tabla = document.querySelector("#tabla-empleados tbody");
+
+    const empleadosKey = "empleadosData";
+
+    function guardarEnStorage(empleados) {
+      localStorage.setItem(empleadosKey, JSON.stringify(empleados));
+    }
+
+    function cargarDesdeStorage() {
+      const datos = JSON.parse(localStorage.getItem(empleadosKey)) || [];
+      datos.forEach(agregarFila);
+    }
+
+    function agregarFila(datos) {
+      const fila = document.createElement("tr");
+
+      datos.forEach(dato => {
+        const celda = document.createElement("td");
+        celda.textContent = dato;
+        celda.contentEditable = true;
+        fila.appendChild(celda);
+      });
+
+      const celdaAcciones = document.createElement("td");
+
+      const btnEliminar = document.createElement("button");
+      btnEliminar.textContent = "Eliminar";
+      btnEliminar.onclick = () => {
+        fila.remove();
+        actualizarStorage();
+      };
+
+      const btnGuardar = document.createElement("button");
+      btnGuardar.textContent = "Guardar";
+      btnGuardar.classList.add("guardar");
+      btnGuardar.onclick = () => {
+        actualizarStorage();
+        alert("Cambios guardados");
+      };
+
+      celdaAcciones.appendChild(btnEliminar);
+      celdaAcciones.appendChild(btnGuardar);
+      fila.appendChild(celdaAcciones);
+
+      tabla.appendChild(fila);
+    }
+
+    function actualizarStorage() {
+      const filas = tabla.querySelectorAll("tr");
+      const empleados = Array.from(filas).map(fila => {
+        const celdas = fila.querySelectorAll("td");
+        return Array.from(celdas).slice(0, 6).map(td => td.textContent);
+      });
+      guardarEnStorage(empleados);
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const datos = [
+        form.cedula.value,
+        form.nombre.value,
+        form.direccion.value,
+        form.telefono.value,
+        form.correo.value,
+        form.comision.value + "%"
+      ];
+
+      agregarFila(datos);
+      actualizarStorage();
+      form.reset();
+    });
+
+    cargarDesdeStorage();
+  </script>
+</body>
+</html>

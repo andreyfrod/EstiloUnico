@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Informes</title>
+  <link rel="stylesheet" href="../estilos.css">
+  <style>
+    .informes-container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #2c2c2c;
+      color: #fff;
+      border-radius: 10px;
+    }
+    h2, h3 {
+      color: #d4af37;
+      margin-bottom: 20px;
+    }
+    .reporte {
+      background-color: #1c1c1c;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div id="contenedor">
+    <div id="nav-placeholder"></div>
+
+    <div class="informes-container">
+      <h2>Informes Generales</h2>
+
+      <div class="reporte" id="personas-dia"></div>
+      <div class="reporte" id="dinero-dia"></div>
+      <div class="reporte" id="afluencia-maxima"></div>
+      <div class="reporte" id="afluencia-minima"></div>
+    </div>
+  </div>
+
+  <script src="../sesion.js"></script>
+  <script>
+    const reservas = JSON.parse(localStorage.getItem("reservasData")) || [];
+    const empleados = JSON.parse(localStorage.getItem("empleadosData")) || [];
+
+    const precios = {
+      "niño": 2500,
+      "adulto": 5000,
+      "adulto mayor": 2500
+    };
+
+    // Personas atendidas
+    const personasPorEmpleado = {};
+    reservas.forEach(r => {
+      if (!personasPorEmpleado[r.empleado]) {
+        personasPorEmpleado[r.empleado] = { "niño": 0, "adulto": 0, "adulto mayor": 0 };
+      }
+      r.condiciones.forEach(c => {
+        personasPorEmpleado[r.empleado][c]++;
+      });
+    });
+
+    let personasHTML = "<h3>Personas Atendidas por Empleado</h3>";
+    for (const emp in personasPorEmpleado) {
+      const datos = personasPorEmpleado[emp];
+      const total = datos["niño"] + datos["adulto"] + datos["adulto mayor"];
+      personasHTML += `<p><strong>${emp}</strong>: Total ${total} (Niños: ${datos["niño"]}, Adultos: ${datos["adulto"]}, Adultos Mayores: ${datos["adulto mayor"]})</p>`;
+    }
+    document.getElementById("personas-dia").innerHTML = personasHTML;
+
+    // Dinero generado
+    const dineroPorEmpleado = {};
+    reservas.forEach(r => {
+      if (!dineroPorEmpleado[r.empleado]) {
+        dineroPorEmpleado[r.empleado] = { total: 0, "niño": 0, "adulto": 0, "adulto mayor": 0 };
+      }
+      r.condiciones.forEach(c => {
+        dineroPorEmpleado[r.empleado][c] += precios[c];
+        dineroPorEmpleado[r.empleado].total += precios[c];
+      });
+    });
+
+    let dineroHTML = "<h3>Dinero Generado por Empleado</h3>";
+    for (const emp in dineroPorEmpleado) {
+      const datos = dineroPorEmpleado[emp];
+      const comision = empleados.find(e => e[1] === emp)?.[5]?.replace('%','') || 0;
+      const montoComision = (datos.total * parseFloat(comision || 0) / 100).toFixed(2);
+      dineroHTML += `<p><strong>${emp}</strong>: Total ₡${datos.total} (Niños: ₡${datos["niño"]}, Adultos: ₡${datos["adulto"]}, Adultos Mayores: ₡${datos["adulto mayor"]}) - Comisión (${comision}%): ₡${montoComision}</p>`;
+    }
+    document.getElementById("dinero-dia").innerHTML = dineroHTML;
+
+    // Afluencia por horario
+    const afluenciaPorHorario = {};
+    reservas.forEach(r => {
+      if (!afluenciaPorHorario[r.horario]) afluenciaPorHorario[r.horario] = 0;
+      afluenciaPorHorario[r.horario] += r.cantidad;
+    });
+
+    let mayor = { horario: "", cantidad: 0 };
+    let menor = { horario: "", cantidad: Infinity };
+    for (const h in afluenciaPorHorario) {
+      const c = afluenciaPorHorario[h];
+      if (c > mayor.cantidad) mayor = { horario: h, cantidad: c };
+      if (c < menor.cantidad) menor = { horario: h, cantidad: c };
+    }
+
+    document.getElementById("afluencia-maxima").innerHTML = `<h3>Horario con Mayor Afluencia</h3><p>${mayor.horario} con ${mayor.cantidad} personas atendidas</p>`;
+    document.getElementById("afluencia-minima").innerHTML = `<h3>Horario con Menor Afluencia</h3><p>${menor.horario} con ${menor.cantidad} personas atendidas</p>`;
+  </script>
+</body>
+</html>

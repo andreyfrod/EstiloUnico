@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo de Clientes</title>
+  <link rel="stylesheet" href="../estilos.css">
+  <style>
+    .cliente-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      padding: 60px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .formulario-cliente {
+      flex: 0.5;
+      min-width: 150px;
+      background-color: #2c2c2c;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .formulario-cliente h2 {
+      color: #d4af37;
+      margin-bottom: 20px;
+    }
+    .formulario-cliente label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .formulario-cliente input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #555;
+      border-radius: 6px;
+      background-color: #1c1c1c;
+      color: #fff;
+    }
+    .formulario-cliente button {
+      margin-top: 20px;
+      background-color: #d4af37;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      color: black;
+    }
+    .formulario-cliente button:hover {
+      background-color: #c19a2e;
+    }
+    .tabla-clientes {
+      flex: 1;
+      min-width: 300px;
+      background-color: #2c2c2c;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      overflow-x: auto;
+    }
+    .tabla-clientes h2 {
+      color: #d4af37;
+      margin-bottom: 15px;
+    }
+    .tabla-clientes table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+    .tabla-clientes th, .tabla-clientes td {
+      border: 1px solid #444;
+      padding: 10px;
+      text-align: center;
+    }
+    .tabla-clientes th {
+      background-color: #1c1c1c;
+      color: #d4af37;
+    }
+    .tabla-clientes td button {
+      margin: 2px;
+      background-color: crimson;
+      color: white;
+      border: none;
+      padding: 0.4em 0.8em;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .tabla-clientes td button.guardar {
+      background-color: #28a745;
+    }
+  </style>
+</head>
+<body>
+  <div id="contenedor">
+    <div id="nav-placeholder"></div>
+
+    <div class="cliente-container">
+        <div class="formulario-cliente">
+        <h2>Agregar Cliente</h2>
+        <form id="form-cliente">
+            <label for="cedula">Cédula:</label>
+            <input type="text" id="cedula" name="cedula" required>
+
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+
+            <label for="direccion">Dirección:</label>
+            <input type="text" id="direccion" name="direccion" required>
+
+            <label for="telefono">Teléfono:</label>
+            <input type="text" id="telefono" name="telefono" required>
+
+            <label for="correo">Correo:</label>
+            <input type="email" id="correo" name="correo" required>
+
+            <button type="submit">Guardar Cliente</button>
+        </form>
+        </div>
+
+        <div class="tabla-clientes">
+        <h2>Lista de Clientes</h2>
+        <table id="tabla-clientes">
+            <thead>
+            <tr>
+                <th>Cédula</th>
+                <th>Nombre</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+                <th>Correo</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Filas dinámicas -->
+            </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("form-cliente");
+    const tabla = document.querySelector("#tabla-clientes tbody");
+    const clientesKey = "clientesData";
+
+    function guardarClientes(clientes) {
+      localStorage.setItem(clientesKey, JSON.stringify(clientes));
+    }
+
+    function cargarClientes() {
+      const datos = JSON.parse(localStorage.getItem(clientesKey)) || [];
+      datos.forEach(agregarFila);
+    }
+
+    function agregarFila(datos) {
+      const fila = document.createElement("tr");
+
+      datos.forEach(dato => {
+        const celda = document.createElement("td");
+        celda.textContent = dato;
+        celda.contentEditable = true;
+        fila.appendChild(celda);
+      });
+
+      const celdaAcciones = document.createElement("td");
+
+      const btnEliminar = document.createElement("button");
+      btnEliminar.textContent = "Eliminar";
+      btnEliminar.className = "eliminar";
+      btnEliminar.onclick = () => {
+        fila.remove();
+        actualizarStorage();
+      };
+
+      const btnGuardar = document.createElement("button");
+      btnGuardar.textContent = "Guardar";
+      btnGuardar.className = "guardar";
+      btnGuardar.onclick = () => {
+        actualizarStorage();
+        alert("Cambios guardados");
+      };
+
+      celdaAcciones.appendChild(btnEliminar);
+      celdaAcciones.appendChild(btnGuardar);
+      fila.appendChild(celdaAcciones);
+
+      tabla.appendChild(fila);
+    }
+
+    function actualizarStorage() {
+      const filas = tabla.querySelectorAll("tr");
+      const clientes = Array.from(filas).map(fila => {
+        const celdas = fila.querySelectorAll("td");
+        return Array.from(celdas).slice(0, 5).map(td => td.textContent);
+      });
+      guardarClientes(clientes);
+    }
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+
+      const datos = [
+        form.cedula.value,
+        form.nombre.value,
+        form.direccion.value,
+        form.telefono.value,
+        form.correo.value
+      ];
+
+      agregarFila(datos);
+      actualizarStorage();
+      form.reset();
+    });
+
+    cargarClientes();
+  </script>
+  <script src="../sesion.js"></script>
+</body>
+</html>

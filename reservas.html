@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo de Reservas</title>
+  <link rel="stylesheet" href="../estilos.css">
+  <style>
+    .reserva-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      padding: 60px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .formulario-reserva {
+      flex: 0.5;
+      min-width: 150px;
+      background-color: #2c2c2c;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .formulario-reserva h2 {
+      color: #d4af37;
+      margin-bottom: 20px;
+    }
+    .formulario-reserva label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .formulario-reserva input,
+    .formulario-reserva select,
+    .formulario-reserva textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #555;
+      border-radius: 6px;
+      background-color: #1c1c1c;
+      color: #fff;
+    }
+    .formulario-reserva button {
+      margin-top: 20px;
+      background-color: #d4af37;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      color: black;
+    }
+    .formulario-reserva button:hover {
+      background-color: #c19a2e;
+    }
+    .lista-reservas {
+      flex: 1;
+      min-width: 300px;
+      background-color: #2c2c2c;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      overflow-x: auto;
+    }
+    .lista-reservas h2 {
+      color: #d4af37;
+      margin-bottom: 15px;
+    }
+    .lista-reservas table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+    .lista-reservas th, .lista-reservas td {
+      border: 1px solid #444;
+      padding: 10px;
+      text-align: center;
+    }
+    .lista-reservas th {
+      background-color: #1c1c1c;
+      color: #d4af37;
+    }
+    .lista-reservas td button {
+      margin: 2px;
+      background-color: crimson;
+      color: white;
+      border: none;
+      padding: 0.4em 0.8em;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .lista-reservas td button.guardar {
+      background-color: #28a745;
+    }
+  </style>
+</head>
+<body>
+  <div id="contenedor">
+    <div id="nav-placeholder"></div>
+
+    <div class="reserva-container">
+      <div class="formulario-reserva">
+        <h2>Realizar una Reserva</h2>
+        <form id="form-reserva">
+          <label for="empleado">Empleado:</label>
+          <select id="empleado" name="empleado"></select>
+
+          <label for="cliente">Cliente:</label>
+          <select id="cliente" name="cliente"></select>
+
+          <label for="cantidad">Cantidad de personas:</label>
+          <input type="number" id="cantidad" name="cantidad" min="1" required>
+
+          <label for="condiciones">Condiciones:</label>
+          <select id="condiciones" name="condiciones" multiple required>
+            <option value="niño">Niño</option>
+            <option value="adulto">Adulto</option>
+            <option value="adulto mayor">Adulto Mayor</option>
+          </select>
+
+          <label for="horario">Horario deseado:</label>
+          <select id="horario" name="horario" required>
+            <option value="08:00">08:00</option>
+            <option value="08:30">08:30</option>
+            <option value="09:00">09:00</option>
+            <option value="09:30">09:30</option>
+            <option value="10:00">10:00</option>
+            <option value="10:30">10:30</option>
+          </select>
+
+          <button type="submit">Reservar</button>
+        </form>
+      </div>
+
+      <div class="lista-reservas">
+        <h2>Reservas Registradas</h2>
+        <table id="tabla-reservas">
+          <thead>
+            <tr>
+              <th>N° Reservación</th>
+              <th>Empleado</th>
+              <th>Cliente</th>
+              <th>Cantidad</th>
+              <th>Condiciones</th>
+              <th>Horario</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="../sesion.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const empleados = JSON.parse(localStorage.getItem("empleadosData")) || [];
+      const clientes = JSON.parse(localStorage.getItem("clientesData")) || [];
+      const reservas = JSON.parse(localStorage.getItem("reservasData")) || [];
+
+      const selectEmpleado = document.getElementById("empleado");
+      const selectCliente = document.getElementById("cliente");
+      const form = document.getElementById("form-reserva");
+      const tabla = document.querySelector("#tabla-reservas tbody");
+
+      empleados.forEach(empleado => {
+        const option = document.createElement("option");
+        option.value = empleado[1];
+        option.textContent = empleado[1];
+        selectEmpleado.appendChild(option);
+      });
+
+      clientes.forEach(cliente => {
+        const option = document.createElement("option");
+        option.value = cliente[1];
+        option.textContent = cliente[1];
+        selectCliente.appendChild(option);
+      });
+
+      function renderReservas() {
+        tabla.innerHTML = "";
+        reservas.forEach((reserva, i) => {
+          const fila = document.createElement("tr");
+          fila.innerHTML = `
+            <td>${i + 1}</td>
+            <td>${reserva.empleado}</td>
+            <td>${reserva.cliente}</td>
+            <td>${reserva.cantidad}</td>
+            <td>${reserva.condiciones.join(", ")}</td>
+            <td>${reserva.horario}</td>
+            <td><button onclick="eliminarReserva(${i})">Eliminar</button></td>
+          `;
+          tabla.appendChild(fila);
+        });
+      }
+
+      window.eliminarReserva = function(index) {
+        reservas.splice(index, 1);
+        localStorage.setItem("reservasData", JSON.stringify(reservas));
+        renderReservas();
+      }
+
+      form.addEventListener("submit", e => {
+        e.preventDefault();
+        const empleado = form.empleado.value;
+        const cliente = form.cliente.value;
+        const cantidad = parseInt(form.cantidad.value);
+        const condiciones = Array.from(form.condiciones.selectedOptions).map(o => o.value);
+        const horario = form.horario.value;
+
+        const ocupados = reservas.filter(r => r.horario === horario).reduce((acc, r) => acc + parseInt(r.cantidad), 0);
+        if (ocupados + cantidad > 3) {
+          alert("No hay espacio disponible en ese horario. Por favor elija otro.");
+          return;
+        }
+
+        const nuevaReserva = { empleado, cliente, cantidad, condiciones, horario };
+        reservas.push(nuevaReserva);
+        localStorage.setItem("reservasData", JSON.stringify(reservas));
+        renderReservas();
+        form.reset();
+      });
+
+      renderReservas();
+    });
+  </script>
+</body>
+</html>

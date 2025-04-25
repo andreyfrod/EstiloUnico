@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Estilo Único</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <div id="contenedor">
+    <div id="nav-placeholder"></div>
+
+    <section class="login">
+      <h2>Bienvenido de nuevo</h2>
+      <p>Accedé a tu cuenta para gestionar los módulos del sistema.</p>
+      <form onsubmit="return loginUsuario(event)">
+        <label for="usuario">Usuario</label>
+        <input type="text" id="usuario" name="usuario" placeholder="Ingresá tu usuario" required>
+
+        <label for="contrasena">Contraseña</label>
+        <input type="password" id="contrasena" name="contrasena" placeholder="Ingresá tu contraseña" required>
+
+        <button type="submit" class="boton-login">Ingresar</button>
+      </form>
+    </section>
+  </div>
+
+  <script>
+    function loginUsuario(event) {
+      event.preventDefault();
+      const usuario = document.getElementById("usuario").value;
+      const contrasena = document.getElementById("contrasena").value;
+
+      if (usuario === "admin" && contrasena === "1234") {
+        localStorage.setItem("usuario", "admin");
+        window.location.href = "index.html";
+      } else {
+        alert("Credenciales incorrectas. Intente de nuevo.");
+      }
+    }
+  </script>
+  <script src="sesion.js"></script>
+</body>
+</html>
