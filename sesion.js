@@ -1,13 +1,13 @@
-// ✅ Ruta dinámica para encontrar nav.html sin importar la estructura
-const rutaNav = `${window.location.origin}/EstiloUnico/nav.html`; // Cambiá 'EstiloUnico' si tu repo se llama diferente
+// Detecta si estás en GitHub Pages y arma la ruta base automáticamente
+let base = window.location.hostname.includes("github.io")
+  ? "/EstiloUnico" // <--- nombre exacto del repo
+  : "";
 
-// Carga del nav y sesión
-fetch(rutaNav)
+fetch(`${base}/nav.html`)
   .then(response => response.text())
   .then(data => {
     document.getElementById('nav-placeholder').innerHTML = data;
 
-    // Menú hamburguesa
     const toggle = document.getElementById('menu-toggle');
     const nav = document.getElementById('main-nav');
     if (toggle && nav) {
@@ -16,7 +16,6 @@ fetch(rutaNav)
       });
     }
 
-    // Lógica de sesión
     const usuario = localStorage.getItem("usuario");
     const loginText = document.getElementById("login-text");
     const menuModulos = document.getElementById("menu-modulos");
@@ -28,7 +27,7 @@ fetch(rutaNav)
         loginText.onclick = (e) => {
           e.preventDefault();
           localStorage.removeItem("usuario");
-          window.location.href = "index.html";
+          window.location.href = `${base}/index.html`;
         };
       }
 
